@@ -76,6 +76,7 @@ module.exports = function () {
         }
         console.log("inside init");
 
+        //Start of generate/pdf endpoint
         router.get('/generate/pdf/:process_id', function (req, res) {
             console.log(req.params.process_id);
             console.log("inside /");
@@ -86,6 +87,8 @@ module.exports = function () {
 
             }
             var url_to_get_json = `https://intprocesseedemo-gse00014270.uscom-east-1.oraclecloud.com/ic/api/process/v1/processes/${req.params.process_id}/dataobjects`;
+
+            // Start of api call to get Json Data & create PDF file
             client.get(url_to_get_json, args_to_get_json, function (data, response) {
                 //console.log(data);
                 // parsed response body as js object
@@ -98,6 +101,7 @@ module.exports = function () {
                 var filterObj = JSON.parse(filterObjJSONData);
                 console.log(filterObj);
                 var html = json2html.transform(filterObj, transform);
+
                 pdf.create(html, options).toFile('myWebPDFFILE.pdf', function (err, res) {
                     if (err) return console.log(err);
                     console.log(res); // { filename: '/app/businesscard.pdf' }
@@ -121,7 +125,13 @@ module.exports = function () {
                         },
                         encoding: null
                     };
-                    request(options, function (err, response, body) {
+                    // Start of Api call to get ProjectName & read Pdf file
+                    request(options, function (err_toGetProjectName, response, body) {
+                        
+                        if(err_toGetProjectName){
+                            console.log('Something went wrong', err_toGetProjectName);
+                            res.send(err_toGetProjectName);
+                        }
 
                         var encoding = response.headers['content-encoding']
                         if (encoding && encoding.indexOf('gzip') >= 0) {
@@ -160,6 +170,7 @@ module.exports = function () {
                                                 }
                                             }
                                         }
+                                        // Start of Api call to send attachment
                                         client.post("https://IntProcessEEDemo-gse00014270.uscom-east-1.oraclecloud.com:443/ic/api/integration/v1/flows/rest/PROJTASKATTACH/1.0/projtaskattach ", argsToSendAttachment, function (data, response) {
                                             // parsed response body as js object
                                             console.log(data);
@@ -167,27 +178,32 @@ module.exports = function () {
 
                                         }).on('error', function (err) {
                                             console.log('something went wrong on the request', err);
-                                        });
+                                            res.send(err);
+                                        });// Start of Api call to send attachment
                                     });
                                 }
                             });
                         } else {
                             console.log('\n\nRESPONSE IS NOT GZIPPED!');
+                            res.send('RESPONSE IS NOT GZIPPED');
                         }
                     });
 
 
+                } else {
+                    console.log('\n\nNot able to get Project Number from Response');
+                    res.send('Not able to get Project Number from Response');
                 }
 
 
 
             }).on('error', function (err) {
                 console.log('something went wrong on the request', err);
-                res.send('im the home page!');
-            });
-            // End of api call to get JSON DATA
+                res.send(err);
+            });// End of api call to get JSON DATA & create PDF file
 
-        });
+
+        });//End of generate/pdf endpoint
 
 
         return app;
