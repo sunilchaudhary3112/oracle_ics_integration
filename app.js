@@ -94,7 +94,7 @@ module.exports = function () {
                     keepAliveDelay: 1000 //and optionally set the initial delay before the first keepalive probe is sent
                 },
                 responseConfig: {
-                    timeout: 10000 //response timeout
+                    timeout: 30000 //response timeout
                 }
 
             }
