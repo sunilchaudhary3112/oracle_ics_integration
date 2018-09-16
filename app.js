@@ -62,14 +62,15 @@ var transform = {
     ]
 };
 
-var isFinished = false;
-var isDataSent = false;
+const space = ' ';
+// var isFinished = false;
+// var isDataSent = false;
 //Code to extend time in heroku response
 const extendTimeoutMiddleware = (req, res, next) => {
     console.log('extendTimeoutMiddleware');
     const space = ' ';
-    isFinished = false;
-    isDataSent = false;
+    let isFinished = false;
+    let isDataSent = false;
     // Only extend the timeout for API requests
     if (!req.url.includes('/')) {
         next();
@@ -99,17 +100,16 @@ const extendTimeoutMiddleware = (req, res, next) => {
     const waitAndSend = () => {
         setTimeout(() => {
             // If the response hasn't finished and hasn't sent any data back....
+            console.log('If the response has not finished and has not sent any data back....');
             if (!isFinished && !isDataSent) {
                 // Need to write the status code/headers if they haven't been sent yet.
                 //setTimeout(function () {
                 // if (!res.headersSent) {
                 //     res.writeHead(202);
                 // }
+                console.log('res.write');
                 res.write(space);
                 //}, 3000);
-
-
-
 
                 // Wait another 15 seconds
                 waitAndSend();
@@ -141,6 +141,8 @@ module.exports = function () {
 
         //Start of generate/pdf endpoint
         router.get('/generate/pdf/:process_id', function (req, res) {
+            res.write(space);
+            var success_data, err_data;
             console.log('setting timeout on req');
             req.setTimeout(500000);
             console.log(req.params.process_id);
@@ -193,9 +195,6 @@ module.exports = function () {
                 } catch (error) {
                     console.log('something went wrong in try-catch', error);
                     console.log('Returning response -- Something went wrong while calling the url_to_get_json api')
-                    isFinished = true;
-                    isDataSent = true;
-                    return res.send('Something went wrong while calling the url_to_get_json api');
                 }
 
                 if (projectNumber != undefined) {
@@ -215,9 +214,7 @@ module.exports = function () {
 
                         if (err_toGetProjectName) {
                             console.log('Something went wrong', err_toGetProjectName);
-                            isFinished = true;
-                            isDataSent = true;
-                            return res.send(err_toGetProjectName);
+                            res.end(err_toGetProjectName);
                         }
 
                         var encoding = response.headers['content-encoding']
@@ -261,44 +258,46 @@ module.exports = function () {
                                         client.post("https://IntProcessEEDemo-gse00014270.uscom-east-1.oraclecloud.com:443/ic/api/integration/v1/flows/rest/PROJTASKATTACH/1.0/projtaskattach ", argsToSendAttachment, function (data, response) {
                                             // parsed response body as js object
                                             console.log(data);
-                                            isFinished = true;
-                                            isDataSent = true;
-                                            return res.send(data);
+
+                                            //success_data = data;
+                                            //return;
+
+                                            return res.end('Success in attachment of pdf');
 
                                         }).on('error', function (err) {
                                             console.log('something went wrong on the request', err);
-                                            isFinished = true;
-                                            isDataSent = true;
-                                            return res.send(err);
+
+
+                                            return res.end('something went wrong on the request');
                                         });// Start of Api call to send attachment
                                     });
                                 }
                             });
                         } else {
                             console.log('\n\nRESPONSE IS NOT GZIPPED!');
-                            isFinished = true;
-                            isDataSent = true;
-                            return res.send('RESPONSE IS NOT GZIPPED');
+
+
+                            return res.end('RESPONSE IS NOT GZIPPED');
                         }
-                    });
+                        console.log('End of Api call to get ProjectName');
+                    }); // End of Api call to get ProjectName
 
 
                 } else {
                     console.log('\n\nNot able to get Project Number from Response');
-                    isFinished = true;
-                    isDataSent = true;
-                    return res.send('Not able to get Project Number from Response');
+
+                    return res.end('something went wrong on the request');
                 }
 
 
-
+                console.log('End of api call to get JSON DATA');
             }).on('error', function (err) {
                 console.log('something went wrong on the request', err);
-                isFinished = true;
-                isDataSent = true;
-                return res.send(err);
+
+                return res.end('something went wrong on the request');
             });// End of api call to get JSON DATA & create PDF file
 
+            console.log('End of generate/pdf endpoint');
 
         });//End of generate/pdf endpoint
 
