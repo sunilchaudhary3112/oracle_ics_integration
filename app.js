@@ -9,6 +9,7 @@ const json2html = require('node-json2html');
 const fs = require('fs');
 const pdf = require('html-pdf');
 const decompressResponse = require('decompress-response');
+//var timeout = require('connect-timeout')
 
 var client = new Client();
 var options = { format: 'Letter' };
@@ -78,6 +79,8 @@ module.exports = function () {
 
         //Start of generate/pdf endpoint
         router.get('/generate/pdf/:process_id', function (req, res) {
+            console.log('setting timeout on req');
+            req.setTimeout(500000);
             console.log(req.params.process_id);
             console.log("inside /");
             /// Api to get JSON DATA 
