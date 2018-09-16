@@ -83,7 +83,19 @@ module.exports = function () {
             /// Api to get JSON DATA 
 
             var args_to_get_json = {
-                headers: { "Content-Type": "application/json", "Authorization": "Basic " + new Buffer("cloud.admin:scenic@4AmaZoN").toString("base64") }
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Basic " + new Buffer("cloud.admin:scenic@4AmaZoN").toString("base64")
+                },
+                requestConfig: {
+                    timeout: 30000, //request timeout in milliseconds
+                    noDelay: true, //Enable/disable the Nagle algorithm
+                    keepAlive: true, //Enable/disable keep-alive functionalityidle socket.
+                    keepAliveDelay: 1000 //and optionally set the initial delay before the first keepalive probe is sent
+                },
+                responseConfig: {
+                    timeout: 10000 //response timeout
+                }
 
             }
             var url_to_get_json = `https://intprocesseedemo-gse00014270.uscom-east-1.oraclecloud.com/ic/api/process/v1/processes/${req.params.process_id}/dataobjects`;
