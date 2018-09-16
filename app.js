@@ -62,12 +62,14 @@ var transform = {
     ]
 };
 
+var isFinished = false;
+var isDataSent = false;
 //Code to extend time in heroku response
 const extendTimeoutMiddleware = (req, res, next) => {
+    console.log('extendTimeoutMiddleware');
     const space = ' ';
-    let isFinished = false;
-    let isDataSent = false;
-
+    isFinished = false;
+    isDataSent = false;
     // Only extend the timeout for API requests
     if (!req.url.includes('/')) {
         next();
@@ -99,15 +101,15 @@ const extendTimeoutMiddleware = (req, res, next) => {
             // If the response hasn't finished and hasn't sent any data back....
             if (!isFinished && !isDataSent) {
                 // Need to write the status code/headers if they haven't been sent yet.
-                setTimeout(function () {
-                    if (!res.headersSent) {
-                        res.writeHead(202);
-                    }
-                    res.write(space);
-                }, 3000);
+                //setTimeout(function () {
+                if (!res.headersSent) {
+                    res.writeHead(202);
+                }
+                res.write(space);
+                //}, 3000);
 
 
-                
+
 
                 // Wait another 15 seconds
                 waitAndSend();
@@ -191,6 +193,8 @@ module.exports = function () {
                 } catch (error) {
                     console.log('something went wrong in try-catch', error);
                     console.log('Returning response -- Something went wrong while calling the url_to_get_json api')
+                    isFinished = true;
+                    isDataSent = true;
                     return res.send('Something went wrong while calling the url_to_get_json api');
                 }
 
@@ -211,6 +215,8 @@ module.exports = function () {
 
                         if (err_toGetProjectName) {
                             console.log('Something went wrong', err_toGetProjectName);
+                            isFinished = true;
+                            isDataSent = true;
                             return res.send(err_toGetProjectName);
                         }
 
@@ -255,10 +261,14 @@ module.exports = function () {
                                         client.post("https://IntProcessEEDemo-gse00014270.uscom-east-1.oraclecloud.com:443/ic/api/integration/v1/flows/rest/PROJTASKATTACH/1.0/projtaskattach ", argsToSendAttachment, function (data, response) {
                                             // parsed response body as js object
                                             console.log(data);
+                                            isFinished = true;
+                                            isDataSent = true;
                                             return res.send(data);
 
                                         }).on('error', function (err) {
                                             console.log('something went wrong on the request', err);
+                                            isFinished = true;
+                                            isDataSent = true;
                                             return res.send(err);
                                         });// Start of Api call to send attachment
                                     });
@@ -266,6 +276,8 @@ module.exports = function () {
                             });
                         } else {
                             console.log('\n\nRESPONSE IS NOT GZIPPED!');
+                            isFinished = true;
+                            isDataSent = true;
                             return res.send('RESPONSE IS NOT GZIPPED');
                         }
                     });
@@ -273,6 +285,8 @@ module.exports = function () {
 
                 } else {
                     console.log('\n\nNot able to get Project Number from Response');
+                    isFinished = true;
+                    isDataSent = true;
                     return res.send('Not able to get Project Number from Response');
                 }
 
@@ -280,6 +294,8 @@ module.exports = function () {
 
             }).on('error', function (err) {
                 console.log('something went wrong on the request', err);
+                isFinished = true;
+                isDataSent = true;
                 return res.send(err);
             });// End of api call to get JSON DATA & create PDF file
 
