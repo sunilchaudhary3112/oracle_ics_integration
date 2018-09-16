@@ -102,9 +102,9 @@ const extendTimeoutMiddleware = (req, res, next) => {
             if (!isFinished && !isDataSent) {
                 // Need to write the status code/headers if they haven't been sent yet.
                 //setTimeout(function () {
-                if (!res.headersSent) {
-                    res.writeHead(202);
-                }
+                // if (!res.headersSent) {
+                //     res.writeHead(202);
+                // }
                 res.write(space);
                 //}, 3000);
 
