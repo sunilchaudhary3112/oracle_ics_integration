@@ -90,27 +90,33 @@ module.exports = function () {
 
             // Start of api call to get Json Data & create PDF file
             client.get(url_to_get_json, args_to_get_json, function (data, response) {
-                //console.log(data);
-                // parsed response body as js object
-                var jsonData = JSON.stringify(data);
-                var projectNumber, ProjectName;
-                jsonData = JSON.parse(jsonData);
+                try {
+                    //console.log(data);
+                    // parsed response body as js object
+                    var jsonData = JSON.stringify(data);
+                    var projectNumber, ProjectName;
+                    jsonData = JSON.parse(jsonData);
 
-                var filterObjArr = jsonData.dataVariableFlatTree.filter(obj => obj.name == 'sourceDataObject');
-                var filterObjJSONData = JSON.stringify(filterObjArr[0].value);
-                var filterObj = JSON.parse(filterObjJSONData);
-                console.log(filterObj);
-                var html = json2html.transform(filterObj, transform);
+                    var filterObjArr = jsonData.dataVariableFlatTree.filter(obj => obj.name == 'sourceDataObject');
+                    var filterObjJSONData = JSON.stringify(filterObjArr[0].value);
+                    var filterObj = JSON.parse(filterObjJSONData);
+                    console.log(filterObj);
+                    var html = json2html.transform(filterObj, transform);
 
-                pdf.create(html, options).toFile('myWebPDFFILE.pdf', function (err, res) {
-                    if (err) return console.log(err);
-                    console.log(res); // { filename: '/app/businesscard.pdf' }
-                });
+                    pdf.create(html, options).toFile('myWebPDFFILE.pdf', function (err, res) {
+                        if (err) return console.log(err);
+                        console.log(res); // { filename: '/app/businesscard.pdf' }
+                    });
 
-                if (filterObj != undefined) {
-                    var filterJSObj = JSON.parse(filterObj);
-                    projectNumber = filterJSObj.projectnumber;
-                    console.log(`projectnumber : ${projectNumber}`);
+                    if (filterObj != undefined) {
+                        var filterJSObj = JSON.parse(filterObj);
+                        projectNumber = filterJSObj.projectnumber;
+                        console.log(`projectnumber : ${projectNumber}`);
+                    }
+                } catch (error) {
+                    console.log('something went wrong in try-catch', error);
+                    console.log('Returning response -- Something went wrong while calling the url_to_get_json api')
+                    return res.send('Something went wrong while calling the url_to_get_json api');
                 }
 
                 if (projectNumber != undefined) {
@@ -127,10 +133,10 @@ module.exports = function () {
                     };
                     // Start of Api call to get ProjectName & read Pdf file
                     request(options, function (err_toGetProjectName, response, body) {
-                        
-                        if(err_toGetProjectName){
+
+                        if (err_toGetProjectName) {
                             console.log('Something went wrong', err_toGetProjectName);
-                            res.send(err_toGetProjectName);
+                            return res.send(err_toGetProjectName);
                         }
 
                         var encoding = response.headers['content-encoding']
@@ -174,32 +180,32 @@ module.exports = function () {
                                         client.post("https://IntProcessEEDemo-gse00014270.uscom-east-1.oraclecloud.com:443/ic/api/integration/v1/flows/rest/PROJTASKATTACH/1.0/projtaskattach ", argsToSendAttachment, function (data, response) {
                                             // parsed response body as js object
                                             console.log(data);
-                                            res.send(data);
+                                            return res.send(data);
 
                                         }).on('error', function (err) {
                                             console.log('something went wrong on the request', err);
-                                            res.send(err);
+                                            return res.send(err);
                                         });// Start of Api call to send attachment
                                     });
                                 }
                             });
                         } else {
                             console.log('\n\nRESPONSE IS NOT GZIPPED!');
-                            res.send('RESPONSE IS NOT GZIPPED');
+                            return res.send('RESPONSE IS NOT GZIPPED');
                         }
                     });
 
 
                 } else {
                     console.log('\n\nNot able to get Project Number from Response');
-                    res.send('Not able to get Project Number from Response');
+                    return res.send('Not able to get Project Number from Response');
                 }
 
 
 
             }).on('error', function (err) {
                 console.log('something went wrong on the request', err);
-                res.send(err);
+                return res.send(err);
             });// End of api call to get JSON DATA & create PDF file
 
 
