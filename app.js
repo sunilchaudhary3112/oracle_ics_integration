@@ -152,7 +152,7 @@ module.exports = function () {
             var args_to_get_json = {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Basic " + new Buffer("cloud.admin:scenic@4AmaZoN").toString("base64")
+                    "Authorization": "Basic " + new Buffer("cloud.admin:ominouS@6TeRM").toString("base64")
                 },
                 requestConfig: {
                     timeout: 30000, //request timeout in milliseconds
@@ -165,7 +165,7 @@ module.exports = function () {
                 }
 
             }
-            var url_to_get_json = `https://intprocesseedemo-gse00014270.uscom-east-1.oraclecloud.com/ic/api/process/v1/processes/${req.params.process_id}/dataobjects`;
+            var url_to_get_json = `https://intprocessee-gse00013749.uscom-east-1.oraclecloud.com/ic/api/process/v1/processes/${req.params.process_id}/dataobjects`;
 
             // Start of api call to get Json Data & create PDF file
             client.get(url_to_get_json, args_to_get_json, function (data, response) {
@@ -200,10 +200,10 @@ module.exports = function () {
                 if (projectNumber != undefined) {
 
                     var options = {
-                        url: `https://ucf1-edtm-fa-ext.oracledemos.com/fscmRestApi/resources/11.13.18.05/projects/${projectNumber}`,
+                        url: `https://ucf1-eedc-fa-ext.oracledemos.com/fscmRestApi/resources/11.13.18.05/projects/${projectNumber}`,
                         method: 'GET',
                         headers: {
-                            "Authorization": "Basic " + new Buffer("ppm_impl:lf663uDI7").toString("base64"),
+                            "Authorization": "Basic " + new Buffer("ppm_impl:gC/q5ORy7").toString("base64"),
                             'Content-Type': 'application/json',
                             'Accept-Encoding': 'gzip'
                         },
@@ -232,7 +232,7 @@ module.exports = function () {
                                         //console.log(read_data.toString('base64'));
                                         file_data = read_data;
                                         var argsToSendAttachment = {
-                                            headers: { "Content-Type": "application/json", "Authorization": "Basic Y2xvdWQuYWRtaW46c2NlbmljQDRBbWFab04=" },
+                                            headers: { "Content-Type": "application/json", "Authorization": "Basic " + new Buffer("cloud.admin:gC/ominouS@6TeRM").toString("base64") },
                                             data: {
                                                 "Header": null, "Body": {
                                                     "uploadAttachment": {
