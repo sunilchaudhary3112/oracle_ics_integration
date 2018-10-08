@@ -255,7 +255,7 @@ module.exports = function () {
                                             }
                                         }
                                         // Start of Api call to send attachment
-                                        client.post("https://IntProcessEEDemo-gse00014270.uscom-east-1.oraclecloud.com:443/ic/api/integration/v1/flows/rest/PROJTASKATTACH/1.0/projtaskattach ", argsToSendAttachment, function (data, response) {
+                                        client.post("https://IntProcessEE-gse00013749.uscom-east-1.oraclecloud.com:443/ic/api/integration/v1/flows/rest/PROJTASKATTACH/1.0/projtaskattach", argsToSendAttachment, function (data, response) {
                                             // parsed response body as js object
                                             console.log(data);
 
