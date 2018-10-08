@@ -232,7 +232,7 @@ module.exports = function () {
                                         //console.log(read_data.toString('base64'));
                                         file_data = read_data;
                                         var argsToSendAttachment = {
-                                            headers: { "Content-Type": "application/json", "Authorization": "Basic " + new Buffer("cloud.admin:gC/ominouS@6TeRM").toString("base64") },
+                                            headers: { "Content-Type": "application/json", "Authorization": "Basic " + new Buffer("cloud.admin:ominouS@6TeRM").toString("base64") },
                                             data: {
                                                 "Header": null, "Body": {
                                                     "uploadAttachment": {
@@ -241,7 +241,7 @@ module.exports = function () {
                                                         "allowDuplicate": "yes",
                                                         "attachmentRows": {
                                                             "UserKeyA": ProjectName,
-                                                            "UserKeyB": "1.0",
+                                                            "UserKeyB": "1",
                                                             "UserKeyC": null,
                                                             "UserKeyD": null,
                                                             "UserKeyE": null,
@@ -254,6 +254,8 @@ module.exports = function () {
                                                 }
                                             }
                                         }
+                                        console.log('Args to Send Data');
+                                        console.log(argsToSendAttachment.data.Body);
                                         // Start of Api call to send attachment
                                         client.post("https://IntProcessEE-gse00013749.uscom-east-1.oraclecloud.com:443/ic/api/integration/v1/flows/rest/PROJTASKATTACH/1.0/projtaskattach", argsToSendAttachment, function (data, response) {
                                             // parsed response body as js object
